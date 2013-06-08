@@ -34,6 +34,51 @@ module Geckoboard
       self.push(:item => [{:text => "", :value => value}, {:text => "", :value => previous_value}])
     end
 
+    # Value and previous value should be numeric values
+    def number_and_secondary_value_reversed(value, previous_value)
+      self.push(:item => [{:text => "", :value => value}, {:text => "", :value => previous_value}], :type => "reverse")
+    end
+
+    # Items should be an array of hashes, each hash containing:
+    # - text
+    # - type (should be either :alert, or :info, optional)
+    def text(items)
+      data = items.collect do |item|
+        type = case item[:type]
+               when :alert
+                 1
+               when :info
+                 2
+               else
+                 0
+               end
+        {:text => item[:text], :type => type}
+      end
+      self.push(:item => data)
+    end
+
+    # Red, amber and green should be values
+    def rag(red, amber, green)
+      self.push(:item => [{:value => red}, {:value => amber}, {:value => green}])
+    end
+
+    # Values should be an array of numeric values
+    # Colour, x_axis and y_axis are optional settings
+    def line(values, colour = nil, x_axis = nil, y_axis = nil)
+      self.push(:item => values, :settings => {:axisx => x_axis, :axisy => y_axis, :colour => colour})
+    end
+
+    # Items should be an array of hashes, each hash containing:
+    # - value (numeric value)
+    # - label (optional)
+    # - colour (optional)
+    def pie(items)
+      data = items.collect do |item|
+        {:value => item[:value], :label => item[:label], :colour => item[:colour]}
+      end
+      self.push(:item => data)
+    end
+
     # Items should be an array of hashes, each hash containing:
     # - text
     # - type (should be either :alert, or :info, optional)
